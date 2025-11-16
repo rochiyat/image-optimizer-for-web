@@ -1,0 +1,26 @@
+{
+  "name": "image-optimizer-for-web",
+  "version": "1.0.0",
+  "description": "Web komunitas dengan optimasi gambar",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "images:optimize": "node scripts/optimize-images.js",
+    "images:check": "find public/images -type f -exec du -h {} \\; | sort -rh | head -20",
+    "images:check-large": "find public/images -type f -size +500k -exec ls -lh {} \\; | awk '{print $5, $9}'",
+    "images:clean-temp": "rm -rf temp-uploads/*",
+    "images:stats": "node scripts/check-image-stats.js"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "glob": "^10.3.10",
+    "sharp": "^0.33.0"
+  }
+}
