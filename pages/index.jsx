@@ -1,0 +1,171 @@
+import Head from 'next/head';
+import Link from 'next/link';
+
+export default function Home() {
+  return (
+    <>
+      <Head>
+        <title>Image Optimizer - Professional Edition</title>
+        <meta name="description" content="Professional image optimization system" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 py-16">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+              Image Optimizer
+            </h1>
+            <p className="text-xl text-gray-600 mb-2">
+              Professional Edition v2.0
+            </p>
+            <p className="text-gray-500">
+              Enterprise-grade image optimization with Bridge Pattern architecture
+            </p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <FeatureCard
+              icon="🎯"
+              title="Smart Optimization"
+              description="Binary search algorithm untuk menemukan quality optimal"
+            />
+            <FeatureCard
+              icon="🌉"
+              title="Bridge Pattern"
+              description="Flexible processor abstraction (Sharp, Cloudinary)"
+            />
+            <FeatureCard
+              icon="⚡"
+              title="High Performance"
+              description="Batch processing dengan concurrency support"
+            />
+            <FeatureCard
+              icon="🔧"
+              title="Easy Configuration"
+              description="Environment-based config dengan validation"
+            />
+            <FeatureCard
+              icon="📊"
+              title="Professional Logging"
+              description="Structured logging dengan multiple levels"
+            />
+            <FeatureCard
+              icon="🧪"
+              title="Testing Ready"
+              description="Unit & integration tests included"
+            />
+          </div>
+
+          {/* Quick Links */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Quick Start
+              </h2>
+
+              <div className="space-y-4">
+                <QuickLink
+                  href="/admin/upload"
+                  title="Upload Images"
+                  description="Upload dan optimize images via web interface"
+                  icon="📤"
+                />
+                <QuickLink
+                  href="/gallery"
+                  title="View Gallery"
+                  description="Lihat gallery images yang sudah dioptimize"
+                  icon="🖼️"
+                />
+                <QuickLink
+                  href="/docs"
+                  title="Documentation"
+                  description="Baca dokumentasi lengkap dan API reference"
+                  icon="📚"
+                />
+              </div>
+
+              {/* CLI Commands */}
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  CLI Commands
+                </h3>
+                <div className="space-y-3">
+                  <CodeBlock
+                    command="npm run images:optimize:v2"
+                    description="Run professional optimization script"
+                  />
+                  <CodeBlock
+                    command="npm run images:stats"
+                    description="Check optimization statistics"
+                  />
+                  <CodeBlock
+                    command="npm test"
+                    description="Run test suite"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-16 grid md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <StatCard label="Processors" value="2" />
+            <StatCard label="API Endpoints" value="2" />
+            <StatCard label="Test Coverage" value="Ready" />
+            <StatCard label="Version" value="2.0" />
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
+
+function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  );
+}
+
+function QuickLink({ href, title, description, icon }) {
+  return (
+    <Link href={href}>
+      <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+        <div className="text-3xl">{icon}</div>
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
+          <p className="text-sm text-gray-600">{description}</p>
+        </div>
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </Link>
+  );
+}
+
+function CodeBlock({ command, description }) {
+  return (
+    <div>
+      <code className="block bg-gray-900 text-green-400 px-4 py-3 rounded-lg font-mono text-sm">
+        $ {command}
+      </code>
+      <p className="text-sm text-gray-600 mt-1 ml-1">{description}</p>
+    </div>
+  );
+}
+
+function StatCard({ label, value }) {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-lg text-center">
+      <div className="text-3xl font-bold text-indigo-600 mb-2">{value}</div>
+      <div className="text-sm text-gray-600">{label}</div>
+    </div>
+  );
+}

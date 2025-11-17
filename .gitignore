@@ -64,3 +64,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 *.bat
+# P
+rofessional Edition - Additional ignores
+logs/
+*.log
+tests/fixtures/output/
