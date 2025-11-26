@@ -165,21 +165,25 @@ npm run dev
 # Open browser
 http://localhost:3000
 
-# Scroll ke section "Upload & Optimize Gambar"
-# Pilih hingga 10 gambar sekaligus
-# Klik "Upload & Optimize"
+# Drag & drop hingga 10 gambar atau klik "Choose Files"
+# Klik "Start Optimization"
 # Download hasil individual atau semua sekaligus
 # Done! ✨
 ```
 
 **Fitur:**
-- Upload hingga 10 gambar sekaligus
-- Preview ukuran original vs optimized
-- Persentase penghematan per gambar
-- Download individual atau bulk download
+- 🎨 **Modern dark theme** dengan animated gradients
+- 🖱️ **Drag & drop** upload area
+- 📤 Upload hingga 10 gambar sekaligus
+- 📊 Preview ukuran original vs optimized
+- 💾 Persentase penghematan per gambar
+- 📥 Download individual atau bulk download
+- ✨ Smooth animations dan transitions
+- 🎯 Glass morphism design
 - Support: JPG, PNG, WebP (auto-convert ke JPEG)
 
-Lihat panduan lengkap: [`BULK_UPLOAD_GUIDE.md`](BULK_UPLOAD_GUIDE.md)
+Lihat panduan lengkap: [`BULK_UPLOAD_GUIDE.md`](BULK_UPLOAD_GUIDE.md)  
+Design details: [`DESIGN_UPDATES.md`](DESIGN_UPDATES.md)
 
 #### B. Admin Upload (Single Image)
 
