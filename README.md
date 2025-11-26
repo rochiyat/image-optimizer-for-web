@@ -510,6 +510,43 @@ module.exports = {
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Generate coverage report |
 
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+Application sudah dikonfigurasi untuk Vercel deployment dengan serverless functions.
+
+**Quick Deploy:**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+**Features:**
+- ✅ Automatic `/tmp` directory handling
+- ✅ Optimized memory (3GB) for image processing
+- ✅ 60s timeout for bulk uploads
+- ✅ Dynamic download endpoint
+- ✅ Environment variables support
+
+**Important Notes:**
+- Files in `/tmp` are temporary (download immediately)
+- Set environment variables in Vercel Dashboard
+- Max 10 images per bulk upload
+- 60 second processing timeout
+
+Lihat panduan lengkap: [`VERCEL_DEPLOYMENT.md`](VERCEL_DEPLOYMENT.md)
+
+### Other Platforms
+
+For other platforms (AWS, Google Cloud, etc.), ensure:
+- Writable `/tmp` directory
+- Sufficient memory (3GB+) for Sharp
+- Timeout > 60 seconds for bulk processing
+
 ## 💡 Tips & Best Practices
 
 ### 1. Organize by Event

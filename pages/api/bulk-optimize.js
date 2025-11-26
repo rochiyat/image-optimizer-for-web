@@ -13,14 +13,15 @@ export const config = {
   },
 };
 
-const UPLOAD_DIR = './temp-uploads';
-const OUTPUT_DIR = './public/images/optimized';
+// Use /tmp for serverless environments (Vercel)
+const UPLOAD_DIR = process.env.VERCEL ? '/tmp/uploads' : './temp-uploads';
+const OUTPUT_DIR = process.env.VERCEL ? '/tmp/optimized' : './public/images/optimized';
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-// Optimization function using Sharp
-async function optimizeImage(inputPath, outputPath, options = {}) {
+// Optimization function using Sharp - returns buffer for serverless
+async function optimizeImage(inputPath, options = {}) {
   const targetSizeKB = options.targetSizeKB || 400;
   const maxDimension = options.maxDimension || 2000;
   
@@ -65,12 +66,12 @@ async function optimizeImage(inputPath, outputPath, options = {}) {
   
   quality = Math.max(lowQuality, 70); // Minimum quality 70
   
-  // Final optimization
-  await pipeline
+  // Return optimized buffer
+  const optimizedBuffer = await pipeline
     .jpeg({ quality, mozjpeg: true })
-    .toFile(outputPath);
+    .toBuffer();
   
-  return { quality };
+  return { buffer: optimizedBuffer, quality };
 }
 
 export default async function handler(req, res) {
@@ -94,7 +95,7 @@ export default async function handler(req, res) {
       },
     });
 
-    const [fields, files] = await new Promise((resolve, reject) => {
+    const [, files] = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         resolve([fields, files]);
@@ -135,32 +136,38 @@ export default async function handler(req, res) {
         const randomStr = Math.random().toString(36).substring(7);
         const safeName = `${timestamp}-${randomStr}.jpg`;
         const inputPath = file.filepath;
-        const outputPath = path.join(OUTPUT_DIR, safeName);
 
         // Get original file stats
         const originalStats = await fs.stat(inputPath);
 
-        // Optimize image
-        await optimizeImage(inputPath, outputPath, {
+        // Optimize image (returns buffer)
+        const { buffer: optimizedBuffer } = await optimizeImage(inputPath, {
           targetSizeKB: 400,
           maxDimension: 2000
         });
 
-        // Get optimized file stats
-        const optimizedStats = await fs.stat(outputPath);
+        // For Vercel, save to /tmp and serve via API
+        // For local, save to public folder
+        const outputPath = path.join(OUTPUT_DIR, safeName);
+        await fs.writeFile(outputPath, optimizedBuffer);
 
         // Clean up temp file
         await fs.unlink(inputPath);
+
+        // Generate download URL
+        const downloadUrl = process.env.VERCEL 
+          ? `/api/download/${safeName}` 
+          : `/images/optimized/${safeName}`;
 
         results.push({
           success: true,
           originalName: file.originalFilename,
           fileName: safeName,
-          downloadUrl: `/images/optimized/${safeName}`,
+          downloadUrl,
           originalSize: originalStats.size,
-          optimizedSize: optimizedStats.size,
-          savedBytes: originalStats.size - optimizedStats.size,
-          savedPercent: Math.round(((originalStats.size - optimizedStats.size) / originalStats.size) * 100)
+          optimizedSize: optimizedBuffer.length,
+          savedBytes: originalStats.size - optimizedBuffer.length,
+          savedPercent: Math.round(((originalStats.size - optimizedBuffer.length) / originalStats.size) * 100)
         });
 
       } catch (error) {

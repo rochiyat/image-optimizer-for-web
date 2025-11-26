@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "pages/api/bulk-optimize.js": {
+      "maxDuration": 60,
+      "memory": 3008
+    },
+    "pages/api/download/[filename].js": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "VERCEL": "true"
+  }
+}
