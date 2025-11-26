@@ -7,6 +7,10 @@ export default function GalleryPage() {
     <>
       <Head>
         <title>Gallery - Image Optimizer</title>
+        <meta name="description" content="View optimized images gallery" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+        <meta name="theme-color" content="#a855f7" />
       </Head>
 
       <div className="min-h-screen bg-gray-50">

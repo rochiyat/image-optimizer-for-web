@@ -33,7 +33,9 @@ Professional image optimization system yang dibangun dengan clean architecture p
 - 🔧 **Centralized Config** - Environment-based configuration
 - 🧪 **Testing Ready** - Unit & integration tests included
 - 🔌 **RESTful API** - Upload & optimization endpoints
-- 🎨 **Modern UI** - Drag-and-drop upload interface
+- 🎨 **Modern UI** - Drag-and-drop upload interface dengan dark theme
+- ⚡ **Custom Branding** - Professional logo & favicon dengan gradient design
+- 📱 **PWA Ready** - Installable sebagai Progressive Web App
 - 📚 **Comprehensive Docs** - Architecture & API documentation
 
 ## 🚀 Quick Start

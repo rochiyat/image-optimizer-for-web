@@ -12,6 +12,10 @@ export default function UploadPage() {
     <>
       <Head>
         <title>Upload Images - Image Optimizer</title>
+        <meta name="description" content="Upload and optimize images via admin panel" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+        <meta name="theme-color" content="#a855f7" />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
