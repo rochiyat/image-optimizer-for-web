@@ -131,6 +131,80 @@ Optimize uploaded image on-demand.
 
 ---
 
+### 3. Bulk Upload & Optimize
+
+Upload and optimize multiple images at once (max 10 images).
+
+**Endpoint**: `POST /api/bulk-optimize`
+
+**Content-Type**: `multipart/form-data`
+
+**Request**:
+```javascript
+const formData = new FormData();
+files.forEach(file => {
+  formData.append('images', file);
+});
+
+fetch('/api/bulk-optimize', {
+  method: 'POST',
+  body: formData
+});
+```
+
+**Response** (Success - 200):
+```json
+{
+  "success": true,
+  "message": "Processed 3 of 3 images",
+  "summary": {
+    "total": 3,
+    "success": 3,
+    "failed": 0
+  },
+  "results": [
+    {
+      "success": true,
+      "originalName": "photo1.jpg",
+      "fileName": "1234567890-abc123.jpg",
+      "downloadUrl": "/images/optimized/1234567890-abc123.jpg",
+      "originalSize": 2048576,
+      "optimizedSize": 335872,
+      "savedBytes": 1712704,
+      "savedPercent": 84
+    },
+    {
+      "success": true,
+      "originalName": "photo2.png",
+      "fileName": "1234567891-def456.jpg",
+      "downloadUrl": "/images/optimized/1234567891-def456.jpg",
+      "originalSize": 3145728,
+      "optimizedSize": 409600,
+      "savedBytes": 2736128,
+      "savedPercent": 87
+    }
+  ]
+}
+```
+
+**Response** (Error - 400):
+```json
+{
+  "error": "Maximum 10 files allowed",
+  "received": 15
+}
+```
+
+**Validation**:
+- Max files: 10 images per request
+- Max file size: 50 MB per file
+- Allowed types: JPEG, JPG, PNG, WebP
+- Auto-converts to JPEG format
+- Target size: 400KB per image
+- Max dimension: 2000px
+
+---
+
 ## Usage Examples
 
 ### Example 1: Upload and Optimize
@@ -172,23 +246,43 @@ async function uploadAndOptimize(file) {
 }
 ```
 
-### Example 2: Batch Upload
+### Example 2: Bulk Upload & Optimize
 
 ```javascript
-async function batchUpload(files) {
-  const results = [];
-
-  for (const file of files) {
-    try {
-      const result = await uploadAndOptimize(file);
-      results.push({ success: true, result });
-    } catch (error) {
-      results.push({ success: false, error: error.message });
-    }
+async function bulkUploadAndOptimize(files) {
+  if (files.length > 10) {
+    throw new Error('Maximum 10 files allowed');
   }
 
-  return results;
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('images', file);
+  });
+
+  const response = await fetch('/api/bulk-optimize', {
+    method: 'POST',
+    body: formData
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error);
+  }
+
+  return result;
 }
+
+// Usage
+const files = Array.from(fileInput.files);
+const result = await bulkUploadAndOptimize(files);
+
+console.log(`Processed ${result.summary.success} of ${result.summary.total} images`);
+result.results.forEach(r => {
+  if (r.success) {
+    console.log(`${r.originalName}: Saved ${r.savedPercent}%`);
+  }
+});
 ```
 
 ### Example 3: React Component

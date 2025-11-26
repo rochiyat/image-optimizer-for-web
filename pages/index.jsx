@@ -1,7 +1,85 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
+  const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 10) {
+      setError('Maximum 10 gambar yang diperbolehkan');
+      return;
+    }
+    setFiles(selectedFiles);
+    setError(null);
+    setResults(null);
+  };
+
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      setError('Pilih gambar terlebih dahulu');
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await fetch('/api/bulk-optimize', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Upload gagal');
+      }
+
+      setResults(data);
+      setFiles([]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDownload = (url, filename) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDownloadAll = () => {
+    if (!results?.results) return;
+    results.results.forEach(result => {
+      if (result.success) {
+        setTimeout(() => handleDownload(result.downloadUrl, result.fileName), 100);
+      }
+    });
+  };
+
+  const formatBytes = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
   return (
     <>
       <Head>
@@ -23,6 +101,132 @@ export default function Home() {
             <p className="text-gray-500">
               Enterprise-grade image optimization with Bridge Pattern architecture
             </p>
+          </div>
+
+          {/* Bulk Upload Section */}
+          <div className="max-w-4xl mx-auto mb-16">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                🚀 Upload & Optimize Gambar
+              </h2>
+              
+              <div className="space-y-6">
+                {/* File Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pilih Gambar (Max 10)
+                  </label>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleFileChange}
+                    disabled={uploading}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 disabled:opacity-50"
+                  />
+                  <p className="mt-2 text-sm text-gray-500">
+                    Format: JPG, PNG, WebP | Max: 50MB per file
+                  </p>
+                </div>
+
+                {/* Selected Files Preview */}
+                {files.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">
+                      {files.length} Gambar Dipilih:
+                    </h3>
+                    <ul className="space-y-1">
+                      {files.map((file, idx) => (
+                        <li key={idx} className="text-sm text-gray-600">
+                          • {file.name} ({formatBytes(file.size)})
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                <button
+                  onClick={handleUpload}
+                  disabled={uploading || files.length === 0}
+                  className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {uploading ? '⏳ Mengoptimasi...' : '✨ Upload & Optimize'}
+                </button>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    ❌ {error}
+                  </div>
+                )}
+
+                {/* Results */}
+                {results && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-green-900">
+                        ✅ Optimasi Selesai!
+                      </h3>
+                      {results.summary.success > 0 && (
+                        <button
+                          onClick={handleDownloadAll}
+                          className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
+                        >
+                          📥 Download Semua
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="mb-4 text-sm text-green-800">
+                      Berhasil: {results.summary.success} | Gagal: {results.summary.failed}
+                    </div>
+
+                    <div className="space-y-3">
+                      {results.results.map((result, idx) => (
+                        <div
+                          key={idx}
+                          className={`p-4 rounded-lg ${
+                            result.success ? 'bg-white' : 'bg-red-50'
+                          }`}
+                        >
+                          {result.success ? (
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">
+                                  {result.originalName}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {formatBytes(result.originalSize)} → {formatBytes(result.optimizedSize)}
+                                  <span className="text-green-600 font-semibold ml-2">
+                                    (-{result.savedPercent}%)
+                                  </span>
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleDownload(result.downloadUrl, result.fileName)}
+                                className="bg-indigo-600 text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                              >
+                                📥 Download
+                              </button>
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="font-medium text-red-900">
+                                {result.originalName}
+                              </p>
+                              <p className="text-sm text-red-600">
+                                Error: {result.error}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Features Grid */}

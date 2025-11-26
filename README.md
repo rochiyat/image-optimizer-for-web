@@ -22,6 +22,7 @@ Professional image optimization system yang dibangun dengan clean architecture p
 - ✅ **Smart Quality Adjustment** - Binary search algorithm untuk optimal quality
 - ✅ **Multi-Processor Support** - Sharp (local) & Cloudinary (cloud)
 - ✅ **Batch Processing** - Process multiple images efficiently
+- ✅ **Bulk Upload** - Upload hingga 10 gambar sekaligus dengan download hasil
 - ✅ **Auto Resize** - Intelligent dimension optimization (max 2000px)
 - ✅ **Format Conversion** - PNG → JPG, WebP, AVIF
 - ✅ **Progressive JPEG** - MozJPEG compression
@@ -155,14 +156,38 @@ project/
 
 ### Option 1: Web Interface (Recommended)
 
+#### A. Bulk Upload di Landing Page (NEW! ✨)
+
 ```bash
 # Start server
 npm run dev
 
 # Open browser
+http://localhost:3000
+
+# Scroll ke section "Upload & Optimize Gambar"
+# Pilih hingga 10 gambar sekaligus
+# Klik "Upload & Optimize"
+# Download hasil individual atau semua sekaligus
+# Done! ✨
+```
+
+**Fitur:**
+- Upload hingga 10 gambar sekaligus
+- Preview ukuran original vs optimized
+- Persentase penghematan per gambar
+- Download individual atau bulk download
+- Support: JPG, PNG, WebP (auto-convert ke JPEG)
+
+Lihat panduan lengkap: [`BULK_UPLOAD_GUIDE.md`](BULK_UPLOAD_GUIDE.md)
+
+#### B. Admin Upload (Single Image)
+
+```bash
+# Open browser
 http://localhost:3000/admin/upload
 
-# Drag & drop images
+# Drag & drop single image
 # Click "Upload" button
 # Done! ✨
 ```

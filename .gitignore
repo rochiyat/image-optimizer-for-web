@@ -41,6 +41,10 @@ next-env.d.ts
 /temp-uploads/
 /temp-uploads/**/*
 
+# Jangan commit hasil optimasi dari bulk upload
+/public/images/optimized/
+/public/images/optimized/**/*
+
 # Jangan commit original files (yang belum dioptimize)
 **/*-original.jpg
 **/*-original.jpeg
