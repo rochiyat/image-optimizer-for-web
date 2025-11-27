@@ -41,8 +41,11 @@ Setelah proses selesai, Anda akan melihat:
 **Download Individual:**
 - Klik tombol "📥 Download" pada gambar yang diinginkan
 
-**Download Semua:**
-- Klik tombol "📥 Download Semua" di bagian atas hasil
+**Download Semua (ZIP):**
+- Klik tombol "📥 Download All as ZIP" di bagian atas hasil
+- Semua gambar akan di-package dalam satu file ZIP
+- File ZIP otomatis ter-download dengan nama `optimized-images-[timestamp].zip`
+- Includes README.txt dengan summary optimasi
 
 ## Spesifikasi Teknis
 
@@ -62,9 +65,11 @@ Setelah proses selesai, Anda akan melihat:
 - **Output**: `./public/images/optimized/`
 - **Access URL**: `/images/optimized/[filename].jpg`
 
-## API Endpoint
+## API Endpoints
 
 ### POST `/api/bulk-optimize`
+
+Upload dan optimize multiple images.
 
 **Request:**
 ```javascript
@@ -101,6 +106,32 @@ const response = await fetch('/api/bulk-optimize', {
   ]
 }
 ```
+
+### POST `/api/download-zip`
+
+Download multiple images sebagai ZIP file.
+
+**Request:**
+```javascript
+const response = await fetch('/api/download-zip', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    filenames: ['1234567890-abc123.jpg', '1234567891-def456.jpg']
+  })
+});
+
+const blob = await response.blob();
+// Create download link
+const url = window.URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = 'optimized-images.zip';
+link.click();
+```
+
+**Response:**
+Binary ZIP file dengan Content-Type: `application/zip`
 
 ## Troubleshooting
 

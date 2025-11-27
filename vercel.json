@@ -6,6 +6,10 @@
     },
     "pages/api/download/[filename].js": {
       "maxDuration": 10
+    },
+    "pages/api/download-zip.js": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "env": {

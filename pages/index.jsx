@@ -96,13 +96,52 @@ export default function Home() {
     document.body.removeChild(link);
   };
 
-  const handleDownloadAll = () => {
+  const handleDownloadAll = async () => {
     if (!results?.results) return;
-    results.results.forEach(result => {
-      if (result.success) {
-        setTimeout(() => handleDownload(result.downloadUrl, result.fileName), 100);
+    
+    // Get all successful filenames
+    const successfulFiles = results.results
+      .filter(r => r.success)
+      .map(r => r.fileName);
+    
+    if (successfulFiles.length === 0) {
+      setError('No files to download');
+      return;
+    }
+
+    try {
+      // Request ZIP file
+      const response = await fetch('/api/download-zip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filenames: successfulFiles
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create ZIP file');
       }
-    });
+
+      // Get blob from response
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `optimized-images-${Date.now()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (err) {
+      console.error('Download all error:', err);
+      setError('Failed to download ZIP file');
+    }
   };
 
   const formatBytes = (bytes) => {
@@ -365,7 +404,7 @@ export default function Home() {
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
-                          Download All
+                          Download All as ZIP
                         </button>
                       )}
                     </div>

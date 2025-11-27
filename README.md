@@ -179,7 +179,8 @@ http://localhost:3000
 - 📤 Upload hingga 10 gambar sekaligus
 - 📊 Preview ukuran original vs optimized
 - 💾 Persentase penghematan per gambar
-- 📥 Download individual atau bulk download
+- 📥 Download individual atau **bulk download as ZIP**
+- 📦 ZIP includes summary file (README.txt)
 - ✨ Smooth animations dan transitions
 - 🎯 Glass morphism design
 - Support: JPG, PNG, WebP (auto-convert ke JPEG)

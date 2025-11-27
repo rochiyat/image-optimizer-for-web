@@ -172,36 +172,84 @@ fetch('/api/bulk-optimize', {
       "optimizedSize": 335872,
       "savedBytes": 1712704,
       "savedPercent": 84
-    },
-    {
-      "success": true,
-      "originalName": "photo2.png",
-      "fileName": "1234567891-def456.jpg",
-      "downloadUrl": "/images/optimized/1234567891-def456.jpg",
-      "originalSize": 3145728,
-      "optimizedSize": 409600,
-      "savedBytes": 2736128,
-      "savedPercent": 87
     }
   ]
 }
 ```
 
+---
+
+### 4. Download Multiple Images as ZIP
+
+Download multiple optimized images as a single ZIP file.
+
+**Endpoint**: `POST /api/download-zip`
+
+**Content-Type**: `application/json`
+
+**Request**:
+```javascript
+const response = await fetch('/api/download-zip', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    filenames: [
+      '1234567890-abc123.jpg',
+      '1234567891-def456.jpg',
+      '1234567892-ghi789.jpg'
+    ]
+  })
+});
+
+const blob = await response.blob();
+const url = window.URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = 'optimized-images.zip';
+link.click();
+```
+
+**Response** (Success - 200 - Binary ZIP file):
+- Content-Type: `application/zip`
+- Content-Disposition: `attachment; filename="optimized-images-[timestamp].zip"`
+
+**ZIP Contents**:
+```
+optimized-images-1234567890.zip
+├── 1234567890-abc123.jpg
+├── 1234567891-def456.jpg
+├── 1234567892-ghi789.jpg
+└── README.txt (summary file)
+```
+
 **Response** (Error - 400):
 ```json
 {
-  "error": "Maximum 10 files allowed",
-  "received": 15
+  "error": "Filenames array is required"
+}
+```
+
+**Response** (Error - 404):
+```json
+{
+  "error": "No files found",
+  "message": "None of the requested files exist"
 }
 ```
 
 **Validation**:
-- Max files: 10 images per request
-- Max file size: 50 MB per file
-- Allowed types: JPEG, JPG, PNG, WebP
-- Auto-converts to JPEG format
-- Target size: 400KB per image
-- Max dimension: 2000px
+- Max files: 50 images per ZIP
+- Files must exist in optimized directory
+- Automatic filename sanitization
+- Includes summary README.txt
+
+**Features**:
+- Maximum compression (level 9)
+- Automatic error handling
+- Summary file included
+- Works on both Vercel and local
 
 ---
 
