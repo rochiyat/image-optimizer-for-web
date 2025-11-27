@@ -1,0 +1,60 @@
+name: Sync to Main Repository
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "rochiyat"
+          git config --global user.email "rochiyat@gmail.com"
+
+      - name: Add remote repository
+        run: |
+          git remote add target https://github.com/rochiyat-tech/image-optimizer.git || true
+          git remote set-url target https://github.com/rochiyat-tech/image-optimizer.git
+
+      - name: Fetch target repository
+        run: |
+          git fetch target
+
+      - name: Push to target repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        run: |
+          git push https://rochiyat:${GITHUB_TOKEN}@github.com/rochiyat-tech/image-optimizer.git HEAD:main --force
+
+      - name: Sync tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        run: |
+          git push https://rochiyat:${GITHUB_TOKEN}@github.com/rochiyat-tech/image-optimizer.git --tags --force || true
+
+      - name: Notification
+        if: success()
+        run: |
+          echo "✅ Successfully synced to rochiyat-tech/image-optimizer"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Message: ${{ github.event.head_commit.message }}"
+
+      - name: Error notification
+        if: failure()
+        run: |
+          echo "❌ Failed to sync to rochiyat-tech/image-optimizer"
+          echo "Please check the logs above for details"

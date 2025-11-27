@@ -1,0 +1,22 @@
+name: Mirror to rochiyat-tech/image-optimizer
+
+on:
+  push:
+    branches:
+      - '**' # Mirror all branches
+  delete:
+    branches:
+      - '**' # Mirror branch deletions
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    name: Mirror repository
+    
+    steps:
+      - name: Mirror repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: https://github.com/rochiyat-tech/image-optimizer.git
+          ssh_private_key: ${{ secrets.TARGET_REPO_SSH_KEY }}
