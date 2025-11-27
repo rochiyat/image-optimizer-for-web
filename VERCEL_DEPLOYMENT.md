@@ -83,7 +83,7 @@ Konfigurasi Vercel deployment.
   "functions": {
     "pages/api/bulk-optimize.js": {
       "maxDuration": 60,      // 60 seconds timeout
-      "memory": 3008          // 3GB memory for image processing
+      "memory": 1024          // 1GB memory (Hobby plan compatible)
     }
   }
 }
@@ -109,10 +109,14 @@ CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-### Function Settings
+### Function Settings (Hobby Plan Compatible)
 - **Max Duration**: 60 seconds (untuk bulk processing)
-- **Memory**: 3008 MB (untuk Sharp image processing)
+- **Memory**: 1024 MB (1GB - within Hobby plan limit of 2048 MB)
 - **Region**: Auto (atau pilih region terdekat)
+
+**Note**: Vercel Hobby plan limits:
+- Max memory per function: 2048 MB
+- We use 1024 MB to stay well within limits and allow headroom
 
 ## 🔄 How It Works
 
@@ -152,11 +156,13 @@ CLOUDINARY_API_SECRET=your-api-secret
 
 ## 📊 Limitations & Considerations
 
-### Vercel Serverless Limits
+### Vercel Serverless Limits (Hobby Plan)
 - **Max file size**: 50 MB (API body limit)
-- **Max execution time**: 60 seconds (Pro plan)
-- **Memory**: 3008 MB max
+- **Max execution time**: 10 seconds (60s requires Pro plan)
+- **Memory**: 1024 MB configured (max 2048 MB on Hobby plan)
 - **Temporary storage**: `/tmp` cleared after function execution
+
+**Important**: We use 1024 MB memory to stay within Hobby plan limits. For Pro plan, you can increase to 3008 MB for better performance.
 
 ### Recommendations
 1. **File retention**: Files in `/tmp` are temporary
@@ -213,16 +219,18 @@ const UPLOAD_DIR = process.env.VERCEL ? '/tmp/uploads' : './temp-uploads';
 ```
 
 ### Error: "Out of memory"
-**Solution**: Increase memory allocation
+**Solution**: Increase memory allocation (within plan limits)
 ```json
 {
   "functions": {
     "pages/api/bulk-optimize.js": {
-      "memory": 3008
+      "memory": 1024  // Hobby plan: max 2048 MB
     }
   }
 }
 ```
+
+**Note**: If you need more memory, upgrade to Pro plan which allows up to 3008 MB.
 
 ### Error: "File not found" on download
 **Cause**: Files in `/tmp` cleared after function execution

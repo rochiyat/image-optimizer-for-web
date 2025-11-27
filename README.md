@@ -528,16 +528,17 @@ vercel --prod
 
 **Features:**
 - ✅ Automatic `/tmp` directory handling
-- ✅ Optimized memory (3GB) for image processing
-- ✅ 60s timeout for bulk uploads
+- ✅ Optimized memory (1GB) for Hobby plan compatibility
+- ✅ 60s timeout for bulk uploads (requires Pro plan)
 - ✅ Dynamic download endpoint
 - ✅ Environment variables support
 
 **Important Notes:**
 - Files in `/tmp` are temporary (download immediately)
 - Set environment variables in Vercel Dashboard
-- Max 10 images per bulk upload
-- 60 second processing timeout
+- **Hobby Plan**: Max 3-5 images recommended (10s timeout)
+- **Pro Plan**: Max 10 images (60s timeout)
+- See `VERCEL_HOBBY_PLAN.md` for optimization tips
 
 Lihat panduan lengkap: [`VERCEL_DEPLOYMENT.md`](VERCEL_DEPLOYMENT.md)
 
