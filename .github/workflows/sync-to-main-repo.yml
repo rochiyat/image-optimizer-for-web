@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN_SECRET }}
 
       - name: Configure Git
         run: |
@@ -37,13 +37,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
         run: |
-          git push https://rochiyat:${GITHUB_TOKEN}@github.com/rochiyat-tech/image-optimizer.git HEAD:main --force
+          git push https://rochiyat:${TOKEN_SECRET}@github.com/rochiyat-tech/image-optimizer.git HEAD:main --force
 
       - name: Sync tags
         env:
           GITHUB_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
         run: |
-          git push https://rochiyat:${GITHUB_TOKEN}@github.com/rochiyat-tech/image-optimizer.git --tags --force || true
+          git push https://rochiyat:${TOKEN_SECRET}@github.com/rochiyat-tech/image-optimizer.git --tags --force || true
 
       - name: Notification
         if: success()
