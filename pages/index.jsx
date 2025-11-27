@@ -206,7 +206,7 @@ export default function Home() {
               Professional Edition v2.0
             </p>
             <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Enterprise-grade image optimization with AI-powered compression
+              Enterprise-grade image optimization
             </p>
             
             {/* Stats Bar */}
